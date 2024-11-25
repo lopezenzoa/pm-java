@@ -116,11 +116,19 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "ID=" + ID +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", visibility=" + visibility;
+        return String.format(
+                "User\n" +
+                        "  ID: %s,\n" +
+                        "  Name: '%s',\n" +
+                        "  Email: '%s',\n" +
+                        "  Password: '%s',\n" +
+                        "  Visibility: %s\n"
+                ,
+                ID,
+                name,
+                email,
+                password,
+                visibility
+        );
     }
 }

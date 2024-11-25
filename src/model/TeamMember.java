@@ -100,8 +100,12 @@ public class TeamMember extends User {
     @Override
     public String toString() {
         return super.toString() +
-                ", ongoingProjects=" + ongoingProjects +
-                ", role=" + role +
-                '}';
+                String.format(
+                    "  ongoingProjects: %s,\n" +
+                    "  role: %s\n"
+                    ,
+                    ongoingProjects,
+                    role
+                );
     }
 }

@@ -380,17 +380,29 @@ public class Project {
 
     @Override
     public String toString() {
-        return "Project{" +
-                "ID=" + ID +
-                ", admin=" + admin.getName() +
-                ", leader=" + leader.getName() +
-                ", team=" + getTeamIDs() +
-                ", tasks=" + getTasksIDs() +
-                ", name='" + name + '\'' +
-                ", creationDate='" + creationDate + '\'' +
-                ", deadline='" + deadline + '\'' +
-                ", status=" + status +
-                ", visibility=" + visibility +
-                '}';
+        return String.format(
+                "Project\n" +
+                        "  ID: %s,\n" +
+                        "  Admin: %s,\n" +
+                        "  Leader: %s,\n" +
+                        "  Team: %s,\n" +
+                        "  Tasks: %s,\n" +
+                        "  Name: '%s',\n" +
+                        "  Creation Date: '%s',\n" +
+                        "  Deadline: '%s',\n" +
+                        "  Status: %s,\n" +
+                        "  Visibility: %s\n"
+                ,
+                ID.toString().substring(0, 8),
+                admin.getName(),
+                leader.getName(),
+                getTeamIDs(),
+                getTasksIDs(),
+                name,
+                creationDate,
+                deadline,
+                status,
+                visibility
+        );
     }
 }

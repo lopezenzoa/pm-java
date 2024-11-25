@@ -161,15 +161,25 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "ID=" + ID +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", responsible=" + responsible +
-                ", creationDate='" + creationDate + '\'' +
-                ", deadline='" + deadline + '\'' +
-                ", status=" + status +
-                ", visibility=" + visibility +
-                '}';
+        return String.format(
+                "Task\n" +
+                        "  ID: %s,\n" +
+                        "  Title: '%s',\n" +
+                        "  Description: '%s',\n" +
+                        "  Responsible: %s,\n" +
+                        "  Creation Date: '%s',\n" +
+                        "  Deadline: '%s',\n" +
+                        "  Status: %s,\n" +
+                        "  Visibility: %s\n"
+                ,
+                ID.toString(),
+                title,
+                description,
+                responsible.getName(),
+                creationDate,
+                deadline,
+                status,
+                visibility
+        );
     }
 }

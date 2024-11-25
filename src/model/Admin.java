@@ -129,7 +129,10 @@ public class Admin extends User {
     @Override
     public String toString() {
         return super.toString() +
-                ", dependants=" + dependants +
-                '}';
+                String.format(
+                    "  dependants: %s\n"
+                    ,
+                    getDependantsIDs()
+                );
     }
 }

@@ -170,8 +170,12 @@ public class Leader extends User {
     @Override
     public String toString() {
         return super.toString() +
-                ", ongoingProjects=" + ongoingProjects +
-                ", dependants=" + dependants +
-                '}';
+                String.format(
+                        "  ongoingProjects: %s,\n" +
+                        "  dependants: %s\n"
+                        ,
+                        ongoingProjects,
+                        getDependantsIDs()
+                );
     }
 }
