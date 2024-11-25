@@ -1,10 +1,14 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashSet;
 import java.util.UUID;
 
 public class Admin extends User {
-    private HashSet<TeamMember> dependants;
+    private HashSet<Leader> dependants;
 
     public Admin(String name, String email, String password) {
         super(name, email, password);
@@ -13,42 +17,37 @@ public class Admin extends User {
 
     /**
      * Construye un objeto de tipo Administrador a partir de un objeto de tipo JSONObject.
-     * @param jsonObject es el objeto en formato JSON que representa a la clase Administrador.
+     * @param adminJSON es el objeto en formato JSON que representa a la clase Administrador.
      * @author Enzo.
      * */
-    /*
-    public Administrador(JSONObject jsonObject) {
-        // Construye al usuario recibiendo el JSONObject
-        super(jsonObject); // No se si es buena idea ponerlo fuera del bloque try-catch
+    public Admin(JSONObject adminJSON) {
+        super(adminJSON);
 
         try {
-            this.lideresACargo = new HashSet<>();
+            this.dependants = new HashSet<>();
 
-            JSONArray lideresACargoJSON = jsonObject.getJSONArray("lideresACargo");
-
-            for (int i = 0; i < lideresACargoJSON.length(); i++) {
-                JSONObject liderACargoJSON = lideresACargoJSON.getJSONObject(i);
-                lideresACargo.add(new Lider(liderACargoJSON));
+            JSONArray dependantsJSON = adminJSON.getJSONArray("dependants");
+            for (int i = 0; i < dependantsJSON.length(); i++) {
+                JSONObject dependantJSON = dependantsJSON.getJSONObject(i);
+                dependants.add(new Leader(dependantJSON));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-     */
-
-    public HashSet<TeamMember> getDependants() {
+    public HashSet<Leader> getDependants() {
         return dependants;
     }
 
-    public void setDependants(HashSet<TeamMember> dependants) {
+    public void setDependants(HashSet<Leader> dependants) {
         this.dependants = dependants;
     }
 
     /**
      *
      * */
-    public boolean addDependant(TeamMember member) {
+    public boolean addDependant(Leader member) {
         if (!dependants.contains(member)) {
             dependants.add(member);
             return true;
@@ -69,8 +68,8 @@ public class Admin extends User {
     public HashSet<UUID> getDependantsIDs() {
         HashSet<UUID> dependantsIDs = new HashSet<>();
 
-        for (TeamMember member : dependants)
-            dependantsIDs.add(member.getID());
+        for (Leader dependant : dependants)
+            dependantsIDs.add(dependant.getID());
 
         return dependantsIDs;
     }
@@ -80,20 +79,19 @@ public class Admin extends User {
      * @return un objeto de tipo JSONObject con los atributos de la clase.
      * @author Ailen.
      * */
-    /*
     @Override
-    public JSONObject serializar(){
+    public JSONObject serialize(){
         JSONObject adminJSON = null;
 
         try {
-            adminJSON = super.serializar();
-            JSONArray lideresACargoJSON = new JSONArray();
+            adminJSON = super.serialize();
+            JSONArray dependantsJSON = new JSONArray();
 
-            for(Lider lider: lideresACargo){
-                lideresACargoJSON.put(lider);
+            for(Leader dependant : dependants){
+                dependantsJSON.put(dependant.serialize());
             }
 
-            adminJSON.put("lideresACargo", lideresACargoJSON);
+            adminJSON.put("dependants", dependantsJSON);
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -101,12 +99,10 @@ public class Admin extends User {
         return adminJSON;
     }
 
-     */
-
     @Override
     public String toString() {
         return super.toString() +
-                "dependants=" + dependants +
+                ", dependants=" + dependants +
                 '}';
     }
 }

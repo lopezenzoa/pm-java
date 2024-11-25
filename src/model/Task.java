@@ -2,7 +2,10 @@ package model;
 
 import model.enums.Status;
 import model.enums.Visibility;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,31 +24,31 @@ public class Task {
         this.title = title;
         this.description = description;
         this.responsible = responsible;
+        this.creationDate = LocalDate.now().toString();
+        this.deadline = deadline;
         this.status = Status.PENDING;
         this.visibility = Visibility.VISIBLE;
     }
 
     /**
      * Construye una tarea a partir de un objeto de tipo JSONObject.
-     * @param jsonObject es el objeto en formato JSON que representa a la tarea.
+     * @param taskJSON es el objeto en formato JSON que representa a la tarea.
      * @author Enzo.
      * */
-    /*
-    public Tarea(JSONObject jsonObject) {
+    public Task(JSONObject taskJSON) {
         try {
-            this.id = jsonObject.getInt("id");
-            this.titulo = jsonObject.getString("titulo");
-            this.descripcion = jsonObject.getString("descripcion");
-            this.responsable = new MiembroEquipo(jsonObject.getJSONObject("responsable"));
-            this.altaObaja = AltaBaja.valueOf(jsonObject.getString("altaObaja"));
-            String estadoJSON = jsonObject.getString("estado");
-            this.estado = Estado.valueOf(estadoJSON);
+            this.ID = UUID.fromString(taskJSON.getString("ID"));
+            this.title = taskJSON.getString("title");
+            this.description = taskJSON.getString("description");
+            this.responsible = new TeamMember(taskJSON.getJSONObject("responsible"));
+            this.creationDate = taskJSON.getString("creationDate");
+            this.deadline = taskJSON.getString("deadline");
+            this.status = Status.valueOf(taskJSON.getString("status"));
+            this.visibility = Visibility.valueOf(taskJSON.getString("visibility"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
-     */
 
     public UUID getID() {
         return ID;
@@ -123,27 +126,26 @@ public class Task {
      * @return un objeto de tipo JSONObject con los atributos de la tarea.
      * @author Enzo.
      * */
-    /*
-    public JSONObject serializar() {
-        JSONObject tareaJSON = null;
+    public JSONObject serialize() {
+        JSONObject taskJSON = null;
 
         try {
-            tareaJSON = new JSONObject();
+            taskJSON = new JSONObject();
 
-            tareaJSON.put("id", id);
-            tareaJSON.put("titulo", titulo);
-            tareaJSON.put("descripcion", descripcion);
-            tareaJSON.put("responsable", responsable.serializar());
-            tareaJSON.put("estado", estado.toString());
-            tareaJSON.put("altaObaja", altaObaja.toString());
+            taskJSON.put("ID", ID.toString());
+            taskJSON.put("title", title);
+            taskJSON.put("description", description);
+            taskJSON.put("responsible", responsible.serialize());
+            taskJSON.put("creationDate", creationDate);
+            taskJSON.put("deadline", deadline);
+            taskJSON.put("status", status.toString());
+            taskJSON.put("visibility", visibility.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return tareaJSON;
+        return taskJSON;
     }
-
-     */
 
     @Override
     public boolean equals(Object o) {

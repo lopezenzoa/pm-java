@@ -1,6 +1,8 @@
 package model;
 
 import model.enums.Visibility;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -22,27 +24,20 @@ public class User {
 
     /**
      * Construye un usuario a partir de un objeto de tipo JSONObject.
-     * @param jsonObject es el objeto en formato JSON que representa al usuario.
+     * @param userJSON es el objeto en formato JSON que representa al usuario.
      * @author Enzo.
      * */
-    /*
-    public Usuario(JSONObject jsonObject) {
+    public User(JSONObject userJSON) {
         try {
-            this.ID = jsonObject.getInt("id");
-            this.name = jsonObject.getString("nombre");
-            this.email = jsonObject.getString("apellido");
-            this.email = jsonObject.getString("email");
-            this.password = jsonObject.getString("titulo");
-            this.password = jsonObject.getInt("password");
-
-            String altaOBajaJSON = jsonObject.getString("estado");
-            this.altaObaja = AltaBaja.valueOf(altaOBajaJSON);
+            this.ID = UUID.fromString(userJSON.getString("ID"));
+            this.name = userJSON.getString("name");
+            this.email = userJSON.getString("email");
+            this.password = userJSON.getString("password");
+            this.visibility = Visibility.valueOf(userJSON.getString("visibility"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
-     */
 
     public UUID getID() {
         return ID;
@@ -88,28 +83,24 @@ public class User {
      * Serializa la clase usuario.
      * @return un objeto de tipo JSONObject con los atributos del usuario.
      */
-    /*
-    public JSONObject serializar() {
-        JSONObject usuarioJson = null;
+    public JSONObject serialize() {
+        JSONObject userJSON = null;
 
         try {
-            usuarioJson = new JSONObject();
-            usuarioJson.put("id", id);
-            usuarioJson.put("nombre", nombre);
-            usuarioJson.put("apellido", apellido);
-            usuarioJson.put("email", email);
-            usuarioJson.put("titulo", titulo);
-            usuarioJson.put("estado", altaObaja.toString());
-            usuarioJson.put("password", password);
+            userJSON = new JSONObject();
+
+            userJSON.put("ID", ID.toString());
+            userJSON.put("name", name);
+            userJSON.put("email", email);
+            userJSON.put("password", password);
+            userJSON.put("visibility", visibility.toString());
 
         } catch (JSONException e){
             e.printStackTrace();
         }
 
-        return usuarioJson;
+        return userJSON;
     }
-
-     */
 
     @Override
     public boolean equals(Object o) {

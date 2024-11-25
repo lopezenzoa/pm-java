@@ -2,7 +2,11 @@ package model;
 
 import model.enums.Status;
 import model.enums.Visibility;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class Project {
@@ -24,45 +28,47 @@ public class Project {
         this.team = new HashMap<>();
         this.tasks = new LinkedList<>();
         this.name = name;
-        this.creationDate = "2024-23-11";
+        this.creationDate = LocalDate.now().toString();
         this.deadline = deadline;
         this.status = Status.PENDING;
         this.visibility = Visibility.VISIBLE;
     }
 
-    /*
     public Project(JSONObject projectJSON) {
         try {
-            this.ID = jsonObject.getInt("id");
-            this.administrador = new Administrador(jsonObject.getJSONObject("administrador"));
-            this.lider = new Lider(jsonObject.getJSONObject("lider"));
-            this.altaObaja = AltaBaja.valueOf(jsonObject.getString("altaObaja"));
-            this.equipo = new HashSet<>();
-            JSONArray equipoJSON = jsonObject.getJSONArray("equipo");
+            this.ID = UUID.fromString(projectJSON.getString("ID"));
 
-            for (int i = 0; i < equipoJSON.length(); i++) {
-                JSONObject miembroJSON = equipoJSON.getJSONObject(i);
-                equipo.add(new MiembroEquipo(miembroJSON));
+            this.admin = new Admin(projectJSON.getJSONObject("admin"));
+            this.leader = new Leader(projectJSON.getJSONObject("leader"));
+
+            this.team = new HashMap<>();
+
+            JSONArray teamJSON = projectJSON.getJSONArray("team");
+            for (int i = 0; i < teamJSON.length(); i++) {
+                JSONObject memberJSON = teamJSON.getJSONObject(i);
+                UUID memberID = UUID.fromString(memberJSON.getString("ID"));
+                TeamMember member = new TeamMember(memberJSON.getJSONObject("member"));
+
+                team.put(memberID, member);
             }
 
-            this.tareas = new LinkedList<>();
-            JSONArray tareasJSON = jsonObject.getJSONArray("tareas");
+            this.tasks = new LinkedList<>();
 
-            for (int i = 0; i < tareasJSON.length(); i++) {
-                JSONObject tareaJSON = tareasJSON.getJSONObject(i);
-                tareas.add(new Tarea(tareaJSON));
+            JSONArray tasksJSON = projectJSON.getJSONArray("tasks");
+            for (int i = 0; i < tasksJSON.length(); i++) {
+                JSONObject taskJSON = tasksJSON.getJSONObject(i);
+                tasks.add(new Task(taskJSON));
             }
 
-            this.nombre = jsonObject.getString("nombre");
-
-            String estadoJSON = jsonObject.getString("estado");
-            this.estado = Estado.valueOf(estadoJSON);
+            this.name = projectJSON.getString("name");
+            this.creationDate = projectJSON.getString("creationDate");
+            this.deadline = projectJSON.getString("deadline");
+            this.status = Status.valueOf(projectJSON.getString("status"));
+            this.visibility = Visibility.valueOf(projectJSON.getString("visibility"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
-     */
 
     public UUID getID() {
         return ID;
@@ -265,38 +271,43 @@ public class Project {
      * @return a JSONObject representation of the class.
      * @author Enzo.
      * */
-    /*
-    public JSONObject serializar() {
-        JSONObject proyectoJSON = null;
+    public JSONObject serialize() {
+        JSONObject projectJSON = null;
 
         try {
-            proyectoJSON = new JSONObject();
-            JSONArray equipoJSON = new JSONArray();
-            JSONArray tareasJSON = new JSONArray();
+            projectJSON = new JSONObject();
+            JSONArray teamJSON = new JSONArray();
+            JSONArray tasksJSON = new JSONArray();
 
-            proyectoJSON.put("id", id);
-            proyectoJSON.put("administrador", administrador.serializar());
-            proyectoJSON.put("lider", lider.serializar());
-            proyectoJSON.put("altaObaja", altaObaja.toString());
-            for (MiembroEquipo miembro : equipo)
-                equipoJSON.put(miembro.serializar());
+            projectJSON.put("ID", ID.toString());
+            projectJSON.put("admin", admin.serialize());
+            projectJSON.put("leader", leader.serialize());
 
-            proyectoJSON.put("equipo", equipoJSON);
+            JSONObject memberJSON = new JSONObject();
+            for (Map.Entry<UUID, TeamMember> entry : team.entrySet()) {
+                memberJSON.put("ID", entry.getKey().toString());
+                memberJSON.put("member", entry.getValue().serialize());
 
-            for (Tarea t : tareas)
-                tareasJSON.put(t.serializar());
+                teamJSON.put(memberJSON);
+            }
 
-            proyectoJSON.put("tareas", tareasJSON);
-            proyectoJSON.put("nombre", nombre);
-            proyectoJSON.put("estado", estado.toString());
+            projectJSON.put("team", teamJSON);
+
+            for (Task t : tasks)
+                tasksJSON.put(t.serialize());
+
+            projectJSON.put("tasks", tasksJSON);
+            projectJSON.put("name", name);
+            projectJSON.put("creationDate", creationDate);
+            projectJSON.put("deadline", deadline);
+            projectJSON.put("status", status.toString());
+            projectJSON.put("visibility", visibility.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return proyectoJSON;
+        return projectJSON;
     }
-
-     */
 
     @Override
     public boolean equals(Object o) {
@@ -315,10 +326,10 @@ public class Project {
     public String toString() {
         return "Project{" +
                 "ID=" + ID +
-                ", admin=" + admin +
-                ", leader=" + leader +
-                ", team=" + team +
-                ", tasks=" + tasks +
+                ", admin=" + admin.getName() +
+                ", leader=" + leader.getName() +
+                ", team=" + getTeamIDs() +
+                ", tasks=" + getTasksIDs() +
                 ", name='" + name + '\'' +
                 ", creationDate='" + creationDate + '\'' +
                 ", deadline='" + deadline + '\'' +

@@ -1,11 +1,14 @@
 package model;
 
-import javax.management.relation.Role;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashSet;
 import java.util.UUID;
 
 public class Leader extends User {
-    private HashSet<Project> ongoingProjects;
+    private HashSet<UUID> ongoingProjects;
     private HashSet<TeamMember> dependants;
 
     public Leader(String name, String email, String password) {
@@ -16,34 +19,35 @@ public class Leader extends User {
 
     /**
      * Construye un objeto de tipo MiembroEquipo del equipo a partir de un objeto de tipo JSONObject.
-     * @param jsonObject es el objeto en formato JSON que representa a la clase MiembroEquipo.
+     * @param leaderJSON es el objeto en formato JSON que representa a la clase MiembroEquipo.
      * @author Enzo.
      * */
-    /*
-    public MiembroEquipo(JSONObject jsonObject) {
-        // Construye al usuario recibiendo el JSONObject
-        super(jsonObject); // No se si es buena idea ponerlo fuera del bloque try-catch
+    public Leader(JSONObject leaderJSON) {
+        super(leaderJSON);
 
         try {
             this.ongoingProjects = new HashSet<>();
 
-            for (Object idProyectoJSON : jsonObject.getJSONArray("proyectosEnCurso"))
-                ongoingProjects.add(Integer.parseInt(idProyectoJSON.toString()));
+            for (Object projectIDJSON : leaderJSON.getJSONArray("ongoingProjects"))
+                ongoingProjects.add(UUID.fromString(projectIDJSON.toString()));
 
-            String rolJSON = jsonObject.getString("rol");
-            this.role = Rol.valueOf(rolJSON);
+            this.dependants = new HashSet<>();
+
+            JSONArray dependantsJSON = leaderJSON.getJSONArray("dependants");
+            for (int i = 0; i < dependantsJSON.length(); i++) {
+                JSONObject dependantJSON = dependantsJSON.getJSONObject(i);
+                dependants.add(new TeamMember(dependantJSON));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-     */
-
-    public HashSet<Project> getOngoingProjects() {
+    public HashSet<UUID> getOngoingProjects() {
         return ongoingProjects;
     }
 
-    public void setOngoingProjects(HashSet<Project> ongoingProjects) {
+    public void setOngoingProjects(HashSet<UUID> ongoingProjects) {
         this.ongoingProjects = ongoingProjects;
     }
 
@@ -58,9 +62,9 @@ public class Leader extends User {
     /**
      *
      * */
-    public boolean addOngoingProject(Project project) {
-        if (!ongoingProjects.contains(project)) {
-            ongoingProjects.add(project);
+    public boolean addOngoingProject(UUID projectID) {
+        if (!ongoingProjects.contains(projectID)) {
+            ongoingProjects.add(projectID);
             return true;
         }
         return false;
@@ -108,34 +112,31 @@ public class Leader extends User {
      * @return un objeto de tipo JSONObject con los atributos de la clase.
      * @author Ailen.
      * */
-    /*
     @Override
-    public JSONObject serializar(){
-        JSONObject liderJson = null;
+    public JSONObject serialize() {
+        JSONObject leaderJSON = null;
 
         try {
-            liderJson = super.serializar();
-            JSONArray proyectosEnCursoJSON = new JSONArray();
-            JSONArray miembrosACargoJSON = new JSONArray();
+            leaderJSON = super.serialize();
+            JSONArray ongoingProjectsJSON = new JSONArray();
+            JSONArray dependantsJSON = new JSONArray();
 
-            for (String nombreProyecto : proyectosEnCurso){
-                proyectosEnCursoJSON.put(nombreProyecto);
+            for (UUID projectID : ongoingProjects){
+                ongoingProjectsJSON.put(projectID.toString());
             }
 
-            liderJson.put("proyectosEnCurso", proyectosEnCursoJSON);
+            leaderJSON.put("ongoingProjects", ongoingProjectsJSON);
 
-            for(MiembroEquipo miembro: miembrosACargo){
-                miembrosACargoJSON.put(miembro.serializar());
+            for(TeamMember dependant : dependants){
+                dependantsJSON.put(dependant.serialize());
             }
 
-            liderJson.put("miembrosACargo", miembrosACargoJSON);
+            leaderJSON.put("dependants", dependantsJSON);
         } catch (JSONException e){
             e.printStackTrace();
         }
-        return liderJson;
+        return leaderJSON;
     }
-
-     */
 
     @Override
     public String toString() {
