@@ -23,9 +23,8 @@ public class User {
     }
 
     /**
-     * Construye un usuario a partir de un objeto de tipo JSONObject.
-     * @param userJSON es el objeto en formato JSON que representa al usuario.
-     * @author Enzo.
+     * Creates a new user using as a base a JSONObject.
+     * @param userJSON is the JSONObject used as starting point.
      * */
     public User(JSONObject userJSON) {
         try {
@@ -79,10 +78,10 @@ public class User {
         this.visibility = visibility;
     }
 
-    /***
-     * Serializa la clase usuario.
-     * @return un objeto de tipo JSONObject con los atributos del usuario.
-     */
+    /**
+     * Serializes the class User.
+     * @return a JSONObject representation of the class.
+     * */
     public JSONObject serialize() {
         JSONObject userJSON = null;
 

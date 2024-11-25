@@ -18,9 +18,8 @@ public class Leader extends User {
     }
 
     /**
-     * Construye un objeto de tipo MiembroEquipo del equipo a partir de un objeto de tipo JSONObject.
-     * @param leaderJSON es el objeto en formato JSON que representa a la clase MiembroEquipo.
-     * @author Enzo.
+     * Creates a new leader using as a base a JSONObject.
+     * @param leaderJSON is the JSONObject used as starting point.
      * */
     public Leader(JSONObject leaderJSON) {
         super(leaderJSON);
@@ -60,43 +59,74 @@ public class Leader extends User {
     }
 
     /**
-     *
+     * Adds a new project in the ongoing projects' list of the leader.
+     * @param projectID is the ID of the project that want to add.
+     * @return a boolean value depending on if the project could be added or not.
      * */
     public boolean addOngoingProject(UUID projectID) {
-        if (!ongoingProjects.contains(projectID)) {
-            ongoingProjects.add(projectID);
-            return true;
-        }
+        if (!ongoingProjects.contains(projectID))
+            return ongoingProjects.add(projectID);
         return false;
     }
 
     /**
-     *
+     * Removes a project from the ongoing projects' list of the leader.
+     * @param project is the ID of the project that want to remove.
+     * @return a boolean value depending on if the project could be added or not.
      * */
     public boolean removeOngoingProject(Project project) {
         return ongoingProjects.remove(project);
     }
 
     /**
-     *
+     * Adds a new dependant to the dependants' list of the leader.
+     * @param member is the new dependant.
+     * @return a boolean value depending on if the dependant could be added or not.
      * */
     public boolean addDependant(TeamMember member) {
-        if (!dependants.contains(member)) {
-            dependants.add(member);
-            return true;
-        }
+        if (!dependants.contains(member))
+            return dependants.add(member);
         return false;
     }
 
     /**
-     *
+     * Removes a dependant from the dependants' list of the leader.
+     * @param member is the dependant that want to delete.
+     * @return a boolean value depending on if the dependant could be removed or not.
      * */
     public boolean removeDependant(TeamMember member) {
         return dependants.remove(member);
     }
 
     /**
-     *
+     * Removes a dependant from the dependants' list of the leader given its ID.
+     * @param ID is the dependant that want to delete.
+     * @return a boolean value depending on if the dependant could be removed or not.
+     * */
+    public boolean removeDependant(UUID ID) {
+        TeamMember toDelete = searchDependantByID(ID);
+
+        if (toDelete != null)
+            return dependants.remove(toDelete);
+        else
+            return false;
+    }
+
+    /**
+     * Searches a dependant in the dependant's list of the leader.
+     * @param ID is the ID of the dependant that want to search.
+     * @return a TeamMember object if the ID corresponds with a dependant or null otherwise.
+     * */
+    public TeamMember searchDependantByID(UUID ID) {
+        for (TeamMember member : dependants)
+            if (member.getID().equals(ID))
+                return member;
+        return null;
+    }
+
+    /**
+     * Returns a collection of dependants IDs.
+     * @return a HashSet made of dependants IDs.
      * */
     public HashSet<UUID> getDependantsIDs() {
         HashSet<UUID> dependantsIDs = new HashSet<>();
@@ -108,9 +138,8 @@ public class Leader extends User {
     }
 
     /**
-     * Serializa la clase lider.
-     * @return un objeto de tipo JSONObject con los atributos de la clase.
-     * @author Ailen.
+     * Serializes the class Leader.
+     * @return a JSONObject representation of the class.
      * */
     @Override
     public JSONObject serialize() {

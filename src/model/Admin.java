@@ -16,9 +16,8 @@ public class Admin extends User {
     }
 
     /**
-     * Construye un objeto de tipo Administrador a partir de un objeto de tipo JSONObject.
-     * @param adminJSON es el objeto en formato JSON que representa a la clase Administrador.
-     * @author Enzo.
+     * Creates a new admin using as a base a JSONObject.
+     * @param adminJSON is the JSONObject used as starting point.
      * */
     public Admin(JSONObject adminJSON) {
         super(adminJSON);
@@ -45,25 +44,54 @@ public class Admin extends User {
     }
 
     /**
-     *
+     * Adds a new dependant to the dependants' list of the admin.
+     * @param leader is the new dependant.
+     * @return a boolean value depending on if the dependant could be added or not.
      * */
-    public boolean addDependant(Leader member) {
-        if (!dependants.contains(member)) {
-            dependants.add(member);
-            return true;
-        }
+    public boolean addDependant(Leader leader) {
+        if (!dependants.contains(leader))
+            return dependants.add(leader);
         return false;
     }
 
     /**
-     *
+     * Removes a dependant from the dependants' list of the admin.
+     * @param leader is the dependant that want to delete.
+     * @return a boolean value depending on if the dependant could be removed or not.
      * */
-    public boolean removeDependant(TeamMember member) {
-        return dependants.remove(member);
+    public boolean removeDependant(Leader leader) {
+        return dependants.remove(leader);
     }
 
     /**
-     *
+     * Removes a dependant from the dependants' list of the admin given its ID.
+     * @param ID is the dependant that want to delete.
+     * @return a boolean value depending on if the dependant could be removed or not.
+     * */
+    public boolean removeDependant(UUID ID) {
+        Leader toDelete = searchDependantByID(ID);
+
+        if (toDelete != null)
+            return dependants.remove(toDelete);
+        else
+            return false;
+    }
+
+    /**
+     * Searches a dependant in the dependant's list of the admin.
+     * @param ID is the ID of the dependant that want to search.
+     * @return a TeamMember object if the ID corresponds with a dependant or null otherwise.
+     * */
+    public Leader searchDependantByID(UUID ID) {
+        for (Leader leader : dependants)
+            if (leader.getID().equals(ID))
+                return leader;
+        return null;
+    }
+
+    /**
+     * Returns a collection of dependants IDs.
+     * @return a HashSet made of dependants IDs.
      * */
     public HashSet<UUID> getDependantsIDs() {
         HashSet<UUID> dependantsIDs = new HashSet<>();
@@ -75,9 +103,8 @@ public class Admin extends User {
     }
 
     /**
-     * Serializa la clase administrador.
-     * @return un objeto de tipo JSONObject con los atributos de la clase.
-     * @author Ailen.
+     * Serializes the class Admin.
+     * @return a JSONObject representation of the class.
      * */
     @Override
     public JSONObject serialize(){

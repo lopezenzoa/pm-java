@@ -31,9 +31,8 @@ public class Task {
     }
 
     /**
-     * Construye una tarea a partir de un objeto de tipo JSONObject.
-     * @param taskJSON es el objeto en formato JSON que representa a la tarea.
-     * @author Enzo.
+     * Creates a new task using as a base a JSONObject.
+     * @param taskJSON is the JSONObject used as starting point.
      * */
     public Task(JSONObject taskJSON) {
         try {
@@ -115,16 +114,16 @@ public class Task {
     }
 
     /**
-     *
+     * Delays the deadline pontificated when instantiated the task.
+     * @param newDeadline is the deadline that replace the old one.
      * */
     public void delayDeadline(String newDeadline) {
         setDeadline(newDeadline);
     }
 
     /**
-     * Serializa la clase Tarea.
-     * @return un objeto de tipo JSONObject con los atributos de la tarea.
-     * @author Enzo.
+     * Serializes the class Task.
+     * @return a JSONObject representation of the class.
      * */
     public JSONObject serialize() {
         JSONObject taskJSON = null;

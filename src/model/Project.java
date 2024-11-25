@@ -34,6 +34,10 @@ public class Project {
         this.visibility = Visibility.VISIBLE;
     }
 
+    /**
+     * Creates a new project using as a base a JSONObject.
+     * @param projectJSON is the JSONObject used as starting point.
+     * */
     public Project(JSONObject projectJSON) {
         try {
             this.ID = UUID.fromString(projectJSON.getString("ID"));
@@ -153,7 +157,6 @@ public class Project {
     /**
      * Returns a collection of tasks IDs.
      * @return a HashSet made of tasks IDs.
-     * @author Enzo.
      * */
     public HashSet<UUID> getTasksIDs() {
         HashSet<UUID> taskIDs = new HashSet<>();
@@ -167,7 +170,6 @@ public class Project {
     /**
      * Returns a collection of team members IDs.
      * @return a HashSet made of team IDs.
-     * @author Enzo.
      * */
     public HashSet<UUID> getTeamIDs() {
         return new HashSet<>(team.keySet());
@@ -175,51 +177,61 @@ public class Project {
 
 
     /**
-     *
+     * Addes a task to the list of project's tasks.
+     * @param task is the object that want to add.
+     * @return a boolean value depending on if the task could be added or not.
      * */
     public boolean addTask(Task task) {
-        if (!tasks.contains(task)) {
-            tasks.add(task);
-            return true;
-        }
+        if (!tasks.contains(task))
+            return tasks.add(task);
         return false;
     }
 
     /**
-     *
+     * Removes a task from the list of project's tasks.
+     * @param task is the object that want to remove.
+     * @return a boolean value depending on if the task could be removed or not.
      * */
     public boolean removeTask(Task task) {
         return tasks.remove(task);
     }
 
     /**
-     *
+     * Removes a task from the list of project's tasks given its ID.
+     * @param ID is the ID of the task that want to remove.
+     * @return a boolean value depending on if the task could be removed or not.
      * */
-    public boolean removeTaskByID(UUID ID) {
+    public boolean removeTask(UUID ID) {
         Task toDelete = searchTaskByID(ID);
-        if (toDelete != null) {
-            tasks.remove(toDelete);
-            return true;
-        }
+
+        if (toDelete != null)
+            return tasks.remove(toDelete);
+
         return false;
     }
 
     /**
-     *
+     * Checks if a task exists in the list of project's tasks.
+     * @param task is the object that want to check its existence.
+     * @return a boolean value depending on if the task exists or not.
      * */
     public boolean checkTask(Task task) {
         return tasks.contains(task);
     }
 
     /**
-     *
+     * Checks if a task exists in the list of project's tasks given its ID.
+     * @param ID is the ID of the task that want to check its existence.
+     * @return a boolean value depending on if the task exists or not.
      * */
-    public boolean checkTaskByID(UUID ID) {
+    public boolean checkTask(UUID ID) {
         return searchTaskByID(ID) != null;
     }
 
     /**
-     *
+     * Searches a task in the list of project's tasks.
+     * @param ID is the ID of the task that want to search.
+     * @return a Task object if the ID corresponds with a task or null otherwise.
      * */
     private Task searchTaskByID(UUID ID) {
         for (Task task : tasks)
@@ -229,7 +241,9 @@ public class Project {
     }
 
     /**
-     *
+     * Addes a member to the project's team.
+     * @param member is the object that want to add.
+     * @return a boolean value depending on if the member could be added or not.
      * */
     public boolean addTeamMember(TeamMember member) {
         if (!team.containsKey(member.getID())) {
@@ -240,15 +254,41 @@ public class Project {
             return false;
     }
 
+
     /**
-     *
+     * Checks if a member exists in the project's team.
+     * @param member is the object that want to check its existence.
+     * @return a boolean value depending on if the member exists or not.
      * */
     public boolean checkMemberInTeam(TeamMember member) {
         return team.containsKey(member.getID());
     }
 
     /**
-     *
+     * Checks if a task exists in the project's team given its ID.
+     * @param ID is the ID of the member that want to check its existence.
+     * @return a boolean value depending on if the member exists or not.
+     * */
+    public boolean checkMemberInTeam(UUID ID) {
+        return team.containsKey(ID);
+    }
+
+    /**
+     * Searches a member in the project's team.
+     * @param ID is the ID of the member that want to search.
+     * @return a Task object if the ID corresponds with a member or null otherwise.
+     * */
+    public TeamMember searchMemberByID(UUID ID) {
+        for (UUID memberID : team.keySet())
+            if (memberID.equals(ID))
+                return team.get(memberID);
+        return null;
+    }
+
+    /**
+     * Removes a member from the project's member.
+     * @param member is the object that want to remove.
+     * @return a boolean value depending on if the task could be removed or not.
      * */
     public boolean removeMember(TeamMember member) {
         if (team.containsKey(member.getID())) {
@@ -260,7 +300,24 @@ public class Project {
     }
 
     /**
-     *
+     * Removes a member from the project's team given its ID.
+     * @param ID is the ID of the member that want to remove.
+     * @return a boolean value depending on if the member could be removed or not.
+     * */
+    public boolean removeMember(UUID ID) {
+        TeamMember toDelete = searchMemberByID(ID);
+
+        if (toDelete != null) {
+            team.remove(toDelete.getID());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Delays the deadline pontificated when instantiated the project.
+     * @param newDeadline is the deadline that replace the old one.
      * */
     public void delayDeadline(String newDeadline) {
         setDeadline(newDeadline);
@@ -269,7 +326,6 @@ public class Project {
     /**
      * Serializes the class Project.
      * @return a JSONObject representation of the class.
-     * @author Enzo.
      * */
     public JSONObject serialize() {
         JSONObject projectJSON = null;

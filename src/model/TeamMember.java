@@ -19,9 +19,8 @@ public class TeamMember extends User {
     }
 
     /**
-     * Construye un objeto de tipo MiembroEquipo del equipo a partir de un objeto de tipo JSONObject.
-     * @param teamMemberJSON es el objeto en formato JSON que representa a la clase MiembroEquipo.
-     * @author Enzo.
+     * Creates a new team member using as a base a JSONObject.
+     * @param teamMemberJSON is the JSONObject used as starting point.
      * */
     public TeamMember(JSONObject teamMemberJSON) {
         super(teamMemberJSON);
@@ -55,27 +54,28 @@ public class TeamMember extends User {
     }
 
     /**
-     *
+     * Adds a new project in the ongoing projects' list of the member.
+     * @param projectID is the ID of the project that want to add.
+     * @return a boolean value depending on if the project could be added or not.
      * */
     public boolean addOngoingProject(UUID projectID) {
-        if (!ongoingProjects.contains(projectID)) {
-            ongoingProjects.add(projectID);
-            return true;
-        }
+        if (!ongoingProjects.contains(projectID))
+            return ongoingProjects.add(projectID);
         return false;
     }
 
     /**
-     *
+     * Removes a project from the ongoing projects' list of the member.
+     * @param project is the ID of the project that want to remove.
+     * @return a boolean value depending on if the project could be added or not.
      * */
     public boolean removeOngoingProject(Project project) {
         return ongoingProjects.remove(project);
     }
 
     /**
-     * Serializa la clase MiembroEquipo.
-     * @return un objeto de tipo JSONObject con los atributos de la clase.
-     * @author Ailen.
+     * Serializes the class TeamMember.
+     * @return a JSONObject representation of the class.
      * */
     @Override
     public JSONObject serialize() {
