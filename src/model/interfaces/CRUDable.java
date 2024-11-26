@@ -1,8 +1,8 @@
 package model.interfaces;
 
 public interface CRUDable<T> {
-    void create(T model);
-    void read(T model);
+    void create();
+    void read();
     void update(T newModel);
-    void delete(T model);
+    void delete();
 }
