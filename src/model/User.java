@@ -14,6 +14,14 @@ public class User {
     private String password;
     private Visibility visibility;
 
+    public User(UUID ID, String name, String email, String password, Visibility visibility) {
+        this.ID = ID;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.visibility = visibility;
+    }
+
     public User(String name, String email, String password) {
         this.ID = UUID.randomUUID();
         this.name = name;

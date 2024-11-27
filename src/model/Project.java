@@ -21,6 +21,20 @@ public class Project {
     private Status status;
     private Visibility visibility;
 
+    // This method is to instance a Project when getting information from database
+    public Project(UUID ID, Admin admin, Leader leader, String name, String creationDate, String deadline, Status status, Visibility visibility) {
+        this.ID = ID;
+        this.admin = admin;
+        this.leader = leader;
+        this.team = new HashMap<>();
+        this.tasks = new LinkedList<>();
+        this.name = name;
+        this.creationDate = creationDate;
+        this.deadline = deadline;
+        this.status = status;
+        this.visibility = visibility;
+    }
+
     public Project(Admin admin, Leader leader, String name, String deadline) {
         this.ID = UUID.randomUUID();
         this.admin = admin;

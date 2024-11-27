@@ -1,5 +1,6 @@
 package model;
 
+import model.enums.Visibility;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,6 +11,12 @@ import java.util.UUID;
 public class Leader extends User {
     private HashSet<UUID> ongoingProjects;
     private HashSet<TeamMember> dependants;
+
+    public Leader(UUID ID, String name, String email, String password, Visibility visibility) {
+        super(ID, name, email, password, visibility);
+        this.ongoingProjects = new HashSet<>();
+        this.dependants = new HashSet<>();
+    }
 
     public Leader(String name, String email, String password) {
         super(name, email, password);
