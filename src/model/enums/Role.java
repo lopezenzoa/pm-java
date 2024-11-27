@@ -1,8 +1,9 @@
 package model.enums;
 
 public enum Role {
-    BACKEND_DEVELOPER,
-    FRONTEND_DEVELOPER,
-    DESIGNER,
-    MARKETER
+    BACKEND_ENGINEER,
+    FRONTEND_ENGINEER,
+    SQL_DEVELOPER,
+    DB_ADMINISTRATOR,
+    DATA_ANALYST
 }
