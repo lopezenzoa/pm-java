@@ -1,6 +1,7 @@
 package model;
 
 import model.enums.Role;
+import model.enums.Visibility;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,6 +12,12 @@ import java.util.UUID;
 public class TeamMember extends User {
     private HashSet<UUID> ongoingProjects;
     private Role role;
+
+    public TeamMember(UUID ID, String name, String email, String password, Visibility visibility, Role role) {
+        super(ID, name, email, password, visibility);
+        this.ongoingProjects = new HashSet<>();
+        this.role = role;
+    }
 
     public TeamMember(String name, String email, String password, Role role) {
         super(name, email, password);
