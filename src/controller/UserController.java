@@ -5,6 +5,7 @@ import model.Admin;
 import model.Leader;
 import model.TeamMember;
 import model.User;
+import model.enums.Visibility;
 import model.interfaces.CRUDable;
 import view.UserView;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 public class UserController implements CRUDable<User> {
     private User model;
-    private UserView view;
+    private final UserView view;
 
     // Database Connection
     private final String URL = "jdbc:mysql://localhost:3306/PM_Java";
@@ -24,6 +25,10 @@ public class UserController implements CRUDable<User> {
     public UserController(User model, UserView view) {
         this.model = model;
         this.view = view;
+    }
+
+    private void setModel(User model) {
+        this.model = model;
     }
 
     @Override
@@ -87,10 +92,63 @@ public class UserController implements CRUDable<User> {
     }
 
     @Override
-    public void update(User newModel) {}
+    public void update(User newModel) {
+        String query = null;
+        newModel.setID(model.getID()); // This line keeps the ID equal for the new model
+        int visibility_id = 1;
+
+        if (newModel.getVisibility().equals(Visibility.INVISIBLE))
+            visibility_id = 2;
+
+        if (model instanceof Admin)
+            query = String.format(
+                    "UPDATE Admin SET name = '%s', password = '%s', email = '%s', visibility_id = %d WHERE admin_id = '%s';"
+                    ,
+                    newModel.getName(),
+                    newModel.getPassword(),
+                    newModel.getEmail(),
+                    visibility_id,
+                    model.getID().toString()
+            );
+        else if (model instanceof Leader)
+            query = String.format(
+                    "UPDATE TABLE Leader SET name = '%s', password = '%s', email = '%s', visibility_id = %d WHERE leader_id = '%s';"
+                    ,
+                    newModel.getName(),
+                    newModel.getPassword(),
+                    newModel.getEmail(),
+                    visibility_id,
+                    model.getID().toString()
+            );
+        else
+            query = String.format(
+                    "UPDATE TABLE TeamMember SET name = '%s', password = '%s', email = '%s', visibility_id = %d WHERE team_member_id = '%s';"
+                    ,
+                    newModel.getName(),
+                    newModel.getPassword(),
+                    newModel.getEmail(),
+                    visibility_id,
+                    model.getID().toString()
+            );
+
+        try {
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        setModel(DatabaseController.getAdmin(newModel.getID()));
+    }
 
     @Override
-    public void delete() {}
+    public void delete() {
+        model.setVisibility(Visibility.INVISIBLE);
+
+        update(model);
+    }
 
     /**
      * Auxiliary method to add dependants for Admins and Leaders in the intermediate tables of the 'PM_Java' database.
@@ -139,5 +197,16 @@ public class UserController implements CRUDable<User> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void print() {
+        view.printUser(model);
+    }
+
+    public void printDependants() {
+        if (model instanceof Admin)
+            view.printDependants((Admin) model);
+        else if (model instanceof Leader)
+            view.printDependants((Leader) model);
     }
 }
