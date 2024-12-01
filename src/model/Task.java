@@ -5,12 +5,14 @@ import model.enums.Visibility;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Task {
     private UUID ID;
+    private UUID projectID;
     private String title;
     private String description;
     private TeamMember responsible;
@@ -19,8 +21,21 @@ public class Task {
     private Status status;
     private Visibility visibility;
 
-    public Task(String title, String description, TeamMember responsible, String deadline) {
+    public Task(UUID ID, UUID projectID, String title, String description, TeamMember responsible, String creationDate, String deadline, Status status, Visibility visibility) {
+        this.ID = ID;
+        this.projectID = projectID;
+        this.title = title;
+        this.description = description;
+        this.responsible = responsible;
+        this.creationDate = creationDate;
+        this.deadline = deadline;
+        this.status = status;
+        this.visibility = visibility;
+    }
+
+    public Task(UUID projectID, String title, String description, TeamMember responsible, String deadline) {
         this.ID = UUID.randomUUID();
+        this.projectID = projectID;
         this.title = title;
         this.description = description;
         this.responsible = responsible;
@@ -37,6 +52,7 @@ public class Task {
     public Task(JSONObject taskJSON) {
         try {
             this.ID = UUID.fromString(taskJSON.getString("ID"));
+            this.projectID = UUID.fromString(taskJSON.getString("projectID"));
             this.title = taskJSON.getString("title");
             this.description = taskJSON.getString("description");
             this.responsible = new TeamMember(taskJSON.getJSONObject("responsible"));
@@ -55,6 +71,14 @@ public class Task {
 
     public void setID(UUID ID) {
         this.ID = ID;
+    }
+
+    public UUID getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(UUID projectID) {
+        this.projectID = projectID;
     }
 
     public String getTitle() {
@@ -132,6 +156,7 @@ public class Task {
             taskJSON = new JSONObject();
 
             taskJSON.put("ID", ID.toString());
+            taskJSON.put("projectID", projectID.toString());
             taskJSON.put("title", title);
             taskJSON.put("description", description);
             taskJSON.put("responsible", responsible.serialize());

@@ -1,15 +1,15 @@
 package database;
 
-import model.Admin;
-import model.Leader;
-import model.Project;
-import model.TeamMember;
+import controller.UserController;
+import model.*;
 import model.enums.Role;
 import model.enums.Status;
 import model.enums.Visibility;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.UUID;
 
 public class DatabaseController {
@@ -40,9 +40,20 @@ public class DatabaseController {
             String password = response.getString(3);
             String email = response.getString(4);
             Visibility visibility = Visibility.valueOf(response.getString(5));
+
+            Admin admin = new Admin(admin_id, name, email, password, visibility);
+
+            // Getting the dependants
+            query = "SELECT leader_id FROM Admin_Leader WHERE admin_id = '" + ID + "';";
+
+            response = statement.executeQuery(query);
+
+            while (response.next())
+                admin.addDependant(getLeader(UUID.fromString(response.getString(1))));
+
             connection.close();
 
-            return new Admin(admin_id, name, email, password, visibility);
+            return admin;
         } catch (SQLException e) {
             return null;
         }
@@ -71,9 +82,19 @@ public class DatabaseController {
             String password = response.getString(3);
             String email = response.getString(4);
             Visibility visibility = Visibility.valueOf(response.getString(5));
+
+            Leader leader = new Leader(leader_id, name, email, password, visibility);
+
+            query = "SELECT team_member_id FROM Leader_TeamMember WHERE leader_id = '" + ID + "';";
+
+            response = statement.executeQuery(query);
+
+            while (response.next())
+                leader.addDependant(getTeamMember(UUID.fromString(response.getString(1))));
+
             connection.close();
 
-            return new Leader(leader_id, name, email, password, visibility);
+            return leader;
         } catch (SQLException e) {
             return null;
         }
@@ -153,28 +174,12 @@ public class DatabaseController {
     }
 
     /**
-     * Gets dependants information from 'PM_Java' database.
-     * @param ID is the ID of an Admin or Leader.
-     * @return a collection of dependants' IDs or null if the ID belongs to a TeamMember or doesn't match with any record.
+     * Returns a collection with all the Admins reached from 'PM_Java' database.
+     * @return an ArrayList of type Admin with all records at the database.
      * */
-    public static HashSet<UUID> getDependants(UUID ID) {
-        HashSet<UUID> IDs = new HashSet<>();
-        String query = null;
-
-        Admin admin = getAdmin(ID);
-
-        if (admin != null) {
-            // The ID belongs to an Admin
-            query = "SELECT * FROM Admin_Leader WHERE admin_id = '" + ID + "';";
-        } else {
-            Leader leader = getLeader(ID);
-
-            if (leader != null) {
-                // The ID belongs to a Leader
-                query = "SELECT * FROM Leader_TeamMember WHERE leader_id = '" + ID + "';";
-            } else
-                return null; // At this point, the ID belongs to a TeamMember (with no dependants) or doesn't match with any record
-        }
+    public static ArrayList<Admin> getAdmins() {
+        String query = "SELECT admin_id FROM Admin ORDER BY name";
+        ArrayList<Admin> admins = new ArrayList<>();
 
         try {
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
@@ -182,12 +187,130 @@ public class DatabaseController {
             ResultSet response = statement.executeQuery(query);
 
             while (response.next())
-                IDs.add(UUID.fromString(response.getString(2)));
+                admins.add(getAdmin(UUID.fromString(response.getString(1))));
             connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return IDs;
+        return admins;
+    }
+
+    /**
+     * Returns a collection with all the Admins reached from 'PM_Java' database.
+     * @return an ArrayList of type Admin with all records at the database.
+     * */
+    public static ArrayList<Leader> getLeaders() {
+        String query = "SELECT leader_id FROM Leader ORDER BY name";
+        ArrayList<Leader> leaders = new ArrayList<>();
+
+        try {
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet response = statement.executeQuery(query);
+
+            while (response.next())
+                leaders.add(getLeader(UUID.fromString(response.getString(1))));
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return leaders;
+    }
+
+    /**
+     * Returns a collection with all the Admins reached from 'PM_Java' database.
+     * @return an ArrayList of type Admin with all records at the database.
+     * */
+    public static ArrayList<TeamMember> getTeamMembers() {
+        String query = "SELECT team_member_id FROM TeamMember ORDER BY name";
+        ArrayList<TeamMember> teamMembers = new ArrayList<>();
+
+        try {
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet response = statement.executeQuery(query);
+
+            while (response.next())
+                teamMembers.add(getTeamMember(UUID.fromString(response.getString(1))));
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return teamMembers;
+    }
+
+    public static Task getTask(UUID ID) {
+        String query = "SELECT task_id, project_id, title, description, responsible_id, creation_date, deadline, status, visibility " +
+                "FROM Task ta " +
+                "JOIN Status st " +
+                "ON ta.status_id = st.status_id " +
+                "JOIN Visibility vi " +
+                "ON ta.visibility_id = vi.visibility_id " +
+                "WHERE task_id = '" + ID + "';";
+
+        try {
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet response = statement.executeQuery(query);
+
+            response.next();
+            UUID task_id = UUID.fromString(response.getString(1));
+            UUID project_id = UUID.fromString(response.getString(2));
+            String title = response.getString(3);
+            String description = response.getString(4);
+            UUID responsible_id = UUID.fromString(response.getString(5));
+            String creation_date = response.getString(6);
+            String deadline = response.getString(7);
+            Status status = Status.valueOf(response.getString(8));
+            Visibility visibility = Visibility.valueOf(response.getString(9));
+
+            // Getting responsible from 'PM_Java' database
+            TeamMember responsible = getTeamMember(responsible_id);
+
+            return new Task(task_id, project_id, title, description, responsible, creation_date, deadline, status, visibility);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ArrayList<Project> getProjects() {
+        String query = "SELECT project_id FROM Project ORDER BY name;";
+        ArrayList<Project> projects = new ArrayList<>();
+
+        try {
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet response = statement.executeQuery(query);
+
+            while (response.next())
+                projects.add(getProject(UUID.fromString(response.getString(1))));
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return projects;
+    }
+
+    public static ArrayList<Task> getTasks() {
+        String query = "SELECT project_id FROM Task ORDER BY name;";
+        ArrayList<Task> tasks = new ArrayList<>();
+
+        try {
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet response = statement.executeQuery(query);
+
+            while (response.next())
+                tasks.add(getTask(UUID.fromString(response.getString(1))));
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return tasks;
     }
 }
