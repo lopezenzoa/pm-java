@@ -189,6 +189,7 @@ public class Task {
         return String.format(
                 "Task\n" +
                         "  ID: %s,\n" +
+                        "  Project: %s,\n" +
                         "  Title: '%s',\n" +
                         "  Description: '%s',\n" +
                         "  Responsible: %s,\n" +
@@ -197,7 +198,8 @@ public class Task {
                         "  Status: %s,\n" +
                         "  Visibility: %s\n"
                 ,
-                ID.toString(),
+                ID,
+                projectID,
                 title,
                 description,
                 responsible.getName(),

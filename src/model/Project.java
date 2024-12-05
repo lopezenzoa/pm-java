@@ -182,11 +182,37 @@ public class Project {
     }
 
     /**
+     * Returns a collection of tasks titles.
+     * @return a HashSet made of tasks titles.
+     * */
+    public HashSet<String> getTasksTitles() {
+        HashSet<String> titles = new HashSet<>();
+
+        for (Task task : tasks)
+            titles.add(task.getTitle());
+
+        return titles;
+    }
+
+    /**
      * Returns a collection of team members IDs.
      * @return a HashSet made of team IDs.
      * */
     public HashSet<UUID> getTeamIDs() {
         return new HashSet<>(team.keySet());
+    }
+
+    /**
+     * Returns a collection of team members names.
+     * @return a HashSet made of team names.
+     * */
+    public HashSet<String> getTeamNames() {
+        HashSet<String> names = new HashSet<>();
+
+        for (TeamMember member : team.values())
+            names.add(member.getName());
+
+        return names;
     }
 
 
@@ -407,11 +433,11 @@ public class Project {
                         "  Status: %s,\n" +
                         "  Visibility: %s\n"
                 ,
-                ID.toString().substring(0, 8),
+                ID,
                 admin.getName(),
                 leader.getName(),
-                getTeamIDs(),
-                getTasksIDs(),
+                getTeamNames(),
+                getTasksTitles(),
                 name,
                 creationDate,
                 deadline,
