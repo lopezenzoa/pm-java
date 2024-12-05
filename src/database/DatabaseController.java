@@ -7,10 +7,7 @@ import model.enums.Status;
 import model.enums.Visibility;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.UUID;
+import java.util.*;
 
 public class DatabaseController {
     static final String URL = "jdbc:mysql://localhost:3306/PM_Java";
@@ -167,7 +164,20 @@ public class DatabaseController {
             Admin admin = getAdmin(admin_id);
             Leader leader = getLeader(leader_id);
 
-            return new Project(project_id, admin, leader, name, creation_date, deadline, status, visibility);
+            Project project = new Project(project_id, admin, leader, name, creation_date, deadline, status, visibility);
+
+            ArrayList<Task> tasks = getTasks();
+            if (!tasks.isEmpty())
+                for (Task task : tasks)
+                    project.addTask(task);
+
+            HashMap<UUID, TeamMember> team = getProjectTeam(project_id);
+
+            if (!team.isEmpty())
+                for (TeamMember member : team.values())
+                    project.addTeamMember(member);
+
+            return project;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -296,7 +306,7 @@ public class DatabaseController {
     }
 
     public static ArrayList<Task> getTasks() {
-        String query = "SELECT project_id FROM Task ORDER BY name;";
+        String query = "SELECT task_id FROM Task;";
         ArrayList<Task> tasks = new ArrayList<>();
 
         try {
@@ -312,5 +322,26 @@ public class DatabaseController {
         }
 
         return tasks;
+    }
+
+    public static HashMap<UUID, TeamMember> getProjectTeam(UUID projectID) {
+        String query = "SELECT team_member_id FROM Team WHERE project_id = '" + projectID + "';";
+        HashMap<UUID, TeamMember> team = new HashMap<>();
+
+        try {
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet response = statement.executeQuery(query);
+
+            while (response.next()) {
+                TeamMember member = getTeamMember(UUID.fromString(response.getString(1)));
+                team.put(member.getID(), member);
+            }
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return team;
     }
 }
