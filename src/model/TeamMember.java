@@ -13,35 +13,12 @@ public class TeamMember extends User {
     private HashSet<UUID> ongoingProjects;
     private Role role;
 
-    public TeamMember(UUID ID, String name, String email, String password, Visibility visibility, Role role) {
+    public TeamMember() { super(); }
+
+    public TeamMember(UUID ID, String name, String email, String password, Visibility visibility, HashSet<UUID> ongoingProjects, Role role) {
         super(ID, name, email, password, visibility);
-        this.ongoingProjects = new HashSet<>();
+        this.ongoingProjects = ongoingProjects;
         this.role = role;
-    }
-
-    public TeamMember(String name, String email, String password, Role role) {
-        super(name, email, password);
-        this.ongoingProjects = new HashSet<>();
-        this.role = role;
-    }
-
-    /**
-     * Creates a new team member using as a base a JSONObject.
-     * @param teamMemberJSON is the JSONObject used as starting point.
-     * */
-    public TeamMember(JSONObject teamMemberJSON) {
-        super(teamMemberJSON);
-
-        try {
-            this.ongoingProjects = new HashSet<>();
-
-            for (Object projectIDJSON : teamMemberJSON.getJSONArray("ongoingProjects"))
-                ongoingProjects.add(UUID.fromString(projectIDJSON.toString()));
-
-            this.role = Role.valueOf(teamMemberJSON.getString("role"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     public HashSet<UUID> getOngoingProjects() {
@@ -78,30 +55,6 @@ public class TeamMember extends User {
      * */
     public boolean removeOngoingProject(Project project) {
         return ongoingProjects.remove(project);
-    }
-
-    /**
-     * Serializes the class TeamMember.
-     * @return a JSONObject representation of the class.
-     * */
-    @Override
-    public JSONObject serialize() {
-        JSONObject memberJSON = null;
-
-        try {
-            memberJSON = super.serialize();
-            JSONArray ongoingProjectsJSON = new JSONArray();
-
-            for (UUID projectID : ongoingProjects)
-                ongoingProjectsJSON.put(projectID.toString());
-
-            memberJSON.put("ongoingProjects", ongoingProjectsJSON);
-            memberJSON.put("role", role.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return memberJSON;
     }
 
     @Override

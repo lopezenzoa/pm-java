@@ -12,41 +12,12 @@ public class Leader extends User {
     private HashSet<UUID> ongoingProjects;
     private HashSet<TeamMember> dependants;
 
-    public Leader(UUID ID, String name, String email, String password, Visibility visibility) {
+    public Leader() { super(); }
+
+    public Leader(UUID ID, String name, String email, String password, Visibility visibility, HashSet<UUID> ongoingProjects, HashSet<TeamMember> dependants) {
         super(ID, name, email, password, visibility);
-        this.ongoingProjects = new HashSet<>();
-        this.dependants = new HashSet<>();
-    }
-
-    public Leader(String name, String email, String password) {
-        super(name, email, password);
-        this.ongoingProjects = new HashSet<>();
-        this.dependants = new HashSet<>();
-    }
-
-    /**
-     * Creates a new leader using as a base a JSONObject.
-     * @param leaderJSON is the JSONObject used as starting point.
-     * */
-    public Leader(JSONObject leaderJSON) {
-        super(leaderJSON);
-
-        try {
-            this.ongoingProjects = new HashSet<>();
-
-            for (Object projectIDJSON : leaderJSON.getJSONArray("ongoingProjects"))
-                ongoingProjects.add(UUID.fromString(projectIDJSON.toString()));
-
-            this.dependants = new HashSet<>();
-
-            JSONArray dependantsJSON = leaderJSON.getJSONArray("dependants");
-            for (int i = 0; i < dependantsJSON.length(); i++) {
-                JSONObject dependantJSON = dependantsJSON.getJSONObject(i);
-                dependants.add(new TeamMember(dependantJSON));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        this.ongoingProjects = ongoingProjects;
+        this.dependants = dependants;
     }
 
     public HashSet<UUID> getOngoingProjects() {
@@ -142,36 +113,6 @@ public class Leader extends User {
             dependantsIDs.add(member.getID());
 
         return dependantsIDs;
-    }
-
-    /**
-     * Serializes the class Leader.
-     * @return a JSONObject representation of the class.
-     * */
-    @Override
-    public JSONObject serialize() {
-        JSONObject leaderJSON = null;
-
-        try {
-            leaderJSON = super.serialize();
-            JSONArray ongoingProjectsJSON = new JSONArray();
-            JSONArray dependantsJSON = new JSONArray();
-
-            for (UUID projectID : ongoingProjects){
-                ongoingProjectsJSON.put(projectID.toString());
-            }
-
-            leaderJSON.put("ongoingProjects", ongoingProjectsJSON);
-
-            for(TeamMember dependant : dependants){
-                dependantsJSON.put(dependant.serialize());
-            }
-
-            leaderJSON.put("dependants", dependantsJSON);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        return leaderJSON;
     }
 
     @Override

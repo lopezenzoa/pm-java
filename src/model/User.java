@@ -14,36 +14,14 @@ public class User {
     private String password;
     private Visibility visibility;
 
+    public User() {}
+
     public User(UUID ID, String name, String email, String password, Visibility visibility) {
         this.ID = ID;
         this.name = name;
         this.email = email;
         this.password = password;
         this.visibility = visibility;
-    }
-
-    public User(String name, String email, String password) {
-        this.ID = UUID.randomUUID();
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.visibility = Visibility.VISIBLE;
-    }
-
-    /**
-     * Creates a new user using as a base a JSONObject.
-     * @param userJSON is the JSONObject used as starting point.
-     * */
-    public User(JSONObject userJSON) {
-        try {
-            this.ID = UUID.fromString(userJSON.getString("ID"));
-            this.name = userJSON.getString("name");
-            this.email = userJSON.getString("email");
-            this.password = userJSON.getString("password");
-            this.visibility = Visibility.valueOf(userJSON.getString("visibility"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     public UUID getID() {
@@ -84,29 +62,6 @@ public class User {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
-
-    /**
-     * Serializes the class User.
-     * @return a JSONObject representation of the class.
-     * */
-    public JSONObject serialize() {
-        JSONObject userJSON = null;
-
-        try {
-            userJSON = new JSONObject();
-
-            userJSON.put("ID", ID.toString());
-            userJSON.put("name", name);
-            userJSON.put("email", email);
-            userJSON.put("password", password);
-            userJSON.put("visibility", visibility.toString());
-
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-
-        return userJSON;
     }
 
     @Override

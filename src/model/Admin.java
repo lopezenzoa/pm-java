@@ -11,34 +11,13 @@ import java.util.UUID;
 public class Admin extends User {
     private HashSet<Leader> dependants;
 
-    public Admin(UUID ID, String name, String email, String password, Visibility visibility) {
+    public Admin() {
+        super();
+    }
+
+    public Admin(UUID ID, String name, String email, String password, Visibility visibility, HashSet<Leader> dependants) {
         super(ID, name, email, password, visibility);
-        this.dependants = new HashSet<>();
-    }
-
-    public Admin(String name, String email, String password) {
-        super(name, email, password);
-        this.dependants = new HashSet<>();
-    }
-
-    /**
-     * Creates a new admin using as a base a JSONObject.
-     * @param adminJSON is the JSONObject used as starting point.
-     * */
-    public Admin(JSONObject adminJSON) {
-        super(adminJSON);
-
-        try {
-            this.dependants = new HashSet<>();
-
-            JSONArray dependantsJSON = adminJSON.getJSONArray("dependants");
-            for (int i = 0; i < dependantsJSON.length(); i++) {
-                JSONObject dependantJSON = dependantsJSON.getJSONObject(i);
-                dependants.add(new Leader(dependantJSON));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        this.dependants = dependants;
     }
 
     public HashSet<Leader> getDependants() {
@@ -106,30 +85,6 @@ public class Admin extends User {
             dependantsIDs.add(dependant.getID());
 
         return dependantsIDs;
-    }
-
-    /**
-     * Serializes the class Admin.
-     * @return a JSONObject representation of the class.
-     * */
-    @Override
-    public JSONObject serialize(){
-        JSONObject adminJSON = null;
-
-        try {
-            adminJSON = super.serialize();
-            JSONArray dependantsJSON = new JSONArray();
-
-            for(Leader dependant : dependants){
-                dependantsJSON.put(dependant.serialize());
-            }
-
-            adminJSON.put("dependants", dependantsJSON);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-
-        return adminJSON;
     }
 
     @Override
