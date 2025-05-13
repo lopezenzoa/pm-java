@@ -21,71 +21,20 @@ public class Project {
     private Status status;
     private Visibility visibility;
 
-    // This method is to instance a Project when getting information from database
-    public Project(UUID ID, Admin admin, Leader leader, String name, String creationDate, String deadline, Status status, Visibility visibility) {
+    public Project() {
+    }
+
+    public Project(UUID ID, Admin admin, Leader leader, HashMap<UUID, TeamMember> team, LinkedList<Task> tasks, String name, String creationDate, String deadline, Status status, Visibility visibility) {
         this.ID = ID;
         this.admin = admin;
         this.leader = leader;
-        this.team = new HashMap<>();
-        this.tasks = new LinkedList<>();
+        this.team = team;
+        this.tasks = tasks;
         this.name = name;
         this.creationDate = creationDate;
         this.deadline = deadline;
         this.status = status;
         this.visibility = visibility;
-    }
-
-    public Project(Admin admin, Leader leader, String name, String deadline) {
-        this.ID = UUID.randomUUID();
-        this.admin = admin;
-        this.leader = leader;
-        this.team = new HashMap<>();
-        this.tasks = new LinkedList<>();
-        this.name = name;
-        this.creationDate = LocalDate.now().toString();
-        this.deadline = deadline;
-        this.status = Status.PENDING;
-        this.visibility = Visibility.VISIBLE;
-    }
-
-    /**
-     * Creates a new project using as a base a JSONObject.
-     * @param projectJSON is the JSONObject used as starting point.
-     * */
-    public Project(JSONObject projectJSON) {
-        try {
-            this.ID = UUID.fromString(projectJSON.getString("ID"));
-
-            this.admin = new Admin(projectJSON.getJSONObject("admin"));
-            this.leader = new Leader(projectJSON.getJSONObject("leader"));
-
-            this.team = new HashMap<>();
-
-            JSONArray teamJSON = projectJSON.getJSONArray("team");
-            for (int i = 0; i < teamJSON.length(); i++) {
-                JSONObject memberJSON = teamJSON.getJSONObject(i);
-                UUID memberID = UUID.fromString(memberJSON.getString("ID"));
-                TeamMember member = new TeamMember(memberJSON.getJSONObject("member"));
-
-                team.put(memberID, member);
-            }
-
-            this.tasks = new LinkedList<>();
-
-            JSONArray tasksJSON = projectJSON.getJSONArray("tasks");
-            for (int i = 0; i < tasksJSON.length(); i++) {
-                JSONObject taskJSON = tasksJSON.getJSONObject(i);
-                tasks.add(new Task(taskJSON));
-            }
-
-            this.name = projectJSON.getString("name");
-            this.creationDate = projectJSON.getString("creationDate");
-            this.deadline = projectJSON.getString("deadline");
-            this.status = Status.valueOf(projectJSON.getString("status"));
-            this.visibility = Visibility.valueOf(projectJSON.getString("visibility"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     public UUID getID() {
@@ -361,48 +310,6 @@ public class Project {
      * */
     public void delayDeadline(String newDeadline) {
         setDeadline(newDeadline);
-    }
-
-    /**
-     * Serializes the class Project.
-     * @return a JSONObject representation of the class.
-     * */
-    public JSONObject serialize() {
-        JSONObject projectJSON = null;
-
-        try {
-            projectJSON = new JSONObject();
-            JSONArray teamJSON = new JSONArray();
-            JSONArray tasksJSON = new JSONArray();
-
-            projectJSON.put("ID", ID.toString());
-            projectJSON.put("admin", admin.serialize());
-            projectJSON.put("leader", leader.serialize());
-
-            JSONObject memberJSON = new JSONObject();
-            for (Map.Entry<UUID, TeamMember> entry : team.entrySet()) {
-                memberJSON.put("ID", entry.getKey().toString());
-                memberJSON.put("member", entry.getValue().serialize());
-
-                teamJSON.put(memberJSON);
-            }
-
-            projectJSON.put("team", teamJSON);
-
-            for (Task t : tasks)
-                tasksJSON.put(t.serialize());
-
-            projectJSON.put("tasks", tasksJSON);
-            projectJSON.put("name", name);
-            projectJSON.put("creationDate", creationDate);
-            projectJSON.put("deadline", deadline);
-            projectJSON.put("status", status.toString());
-            projectJSON.put("visibility", visibility.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return projectJSON;
     }
 
     @Override
