@@ -11,8 +11,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Task {
-    private UUID ID;
-    private UUID projectID;
+    private Integer ID;
+    private Integer projectID;
     private String title;
     private String description;
     private TeamMember responsible;
@@ -24,7 +24,7 @@ public class Task {
     public Task() {
     }
 
-    public Task(UUID ID, UUID projectID, String title, String description, TeamMember responsible, String creationDate, String deadline, Status status, Visibility visibility) {
+    public Task(Integer ID, Integer projectID, String title, String description, TeamMember responsible, String creationDate, String deadline, Status status, Visibility visibility) {
         this.ID = ID;
         this.projectID = projectID;
         this.title = title;
@@ -36,19 +36,19 @@ public class Task {
         this.visibility = visibility;
     }
 
-    public UUID getID() {
+    public Integer getID() {
         return ID;
     }
 
-    public void setID(UUID ID) {
+    public void setID(Integer ID) {
         this.ID = ID;
     }
 
-    public UUID getProjectID() {
+    public Integer getProjectID() {
         return projectID;
     }
 
-    public void setProjectID(UUID projectID) {
+    public void setProjectID(Integer projectID) {
         this.projectID = projectID;
     }
 

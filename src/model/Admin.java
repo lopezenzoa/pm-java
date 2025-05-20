@@ -10,7 +10,7 @@ public class Admin extends User {
 
     public Admin() { super(); }
 
-    public Admin(UUID ID, String name, String email, String password, Visibility visibility, HashSet<Leader> dependants) {
+    public Admin(Integer ID, String name, String email, String password, Visibility visibility, HashSet<Leader> dependants) {
         super(ID, name, email, password, visibility);
         this.dependants = dependants;
     }

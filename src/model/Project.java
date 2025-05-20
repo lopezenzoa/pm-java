@@ -10,10 +10,10 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class Project {
-    private UUID ID;
+    private Integer ID;
     private Admin admin;
     private Leader leader;
-    private HashMap<UUID, TeamMember> team;
+    private HashMap<Integer, TeamMember> team;
     private LinkedList<Task> tasks;
     private String name;
     private String creationDate;
@@ -24,7 +24,7 @@ public class Project {
     public Project() {
     }
 
-    public Project(UUID ID, Admin admin, Leader leader, HashMap<UUID, TeamMember> team, LinkedList<Task> tasks, String name, String creationDate, String deadline, Status status, Visibility visibility) {
+    public Project(Integer ID, Admin admin, Leader leader, HashMap<Integer, TeamMember> team, LinkedList<Task> tasks, String name, String creationDate, String deadline, Status status, Visibility visibility) {
         this.ID = ID;
         this.admin = admin;
         this.leader = leader;
@@ -37,11 +37,11 @@ public class Project {
         this.visibility = visibility;
     }
 
-    public UUID getID() {
+    public Integer getID() {
         return ID;
     }
 
-    public void setID(UUID ID) {
+    public void setID(Integer ID) {
         this.ID = ID;
     }
 
@@ -61,11 +61,11 @@ public class Project {
         this.leader = leader;
     }
 
-    public HashMap<UUID, TeamMember> getTeam() {
+    public HashMap<Integer, TeamMember> getTeam() {
         return team;
     }
 
-    public void setTeam(HashMap<UUID, TeamMember> team) {
+    public void setTeam(HashMap<Integer, TeamMember> team) {
         this.team = team;
     }
 

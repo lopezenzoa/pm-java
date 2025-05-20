@@ -6,22 +6,22 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class Leader extends User {
-    private HashSet<UUID> ongoingProjects;
+    private HashSet<Integer> ongoingProjects;
     private HashSet<TeamMember> dependants;
 
     public Leader() { super(); }
 
-    public Leader(UUID ID, String name, String email, String password, Visibility visibility, HashSet<UUID> ongoingProjects, HashSet<TeamMember> dependants) {
+    public Leader(Integer ID, String name, String email, String password, Visibility visibility, HashSet<Integer> ongoingProjects, HashSet<TeamMember> dependants) {
         super(ID, name, email, password, visibility);
         this.ongoingProjects = ongoingProjects;
         this.dependants = dependants;
     }
 
-    public HashSet<UUID> getOngoingProjects() {
+    public HashSet<Integer> getOngoingProjects() {
         return ongoingProjects;
     }
 
-    public void setOngoingProjects(HashSet<UUID> ongoingProjects) {
+    public void setOngoingProjects(HashSet<Integer> ongoingProjects) {
         this.ongoingProjects = ongoingProjects;
     }
 

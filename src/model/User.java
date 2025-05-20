@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class User {
-    private UUID ID;
+    private Integer ID;
     private String name;
     private String email;
     private String password;
@@ -16,7 +16,7 @@ public class User {
 
     public User() {}
 
-    public User(UUID ID, String name, String email, String password, Visibility visibility) {
+    public User(Integer ID, String name, String email, String password, Visibility visibility) {
         this.ID = ID;
         this.name = name;
         this.email = email;
@@ -24,11 +24,11 @@ public class User {
         this.visibility = visibility;
     }
 
-    public UUID getID() {
+    public Integer getID() {
         return ID;
     }
 
-    public void setID(UUID ID) {
+    public void setID(Integer ID) {
         this.ID = ID;
     }
 

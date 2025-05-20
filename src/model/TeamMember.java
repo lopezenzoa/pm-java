@@ -12,17 +12,17 @@ public class TeamMember extends User {
 
     public TeamMember() { super(); }
 
-    public TeamMember(UUID ID, String name, String email, String password, Visibility visibility, HashSet<UUID> ongoingProjects, Role role) {
+    public TeamMember(Integer ID, String name, String email, String password, Visibility visibility, HashSet<UUID> ongoingProjects, Role role) {
         super(ID, name, email, password, visibility);
         this.ongoingProjects = ongoingProjects;
         this.role = role;
     }
 
-    public HashSet<UUID> getOngoingProjects() {
+    public HashSet<Integer> getOngoingProjects() {
         return ongoingProjects;
     }
 
-    public void setOngoingProjects(HashSet<UUID> ongoingProjects) {
+    public void setOngoingProjects(HashSet<Integer> ongoingProjects) {
         this.ongoingProjects = ongoingProjects;
     }
 
