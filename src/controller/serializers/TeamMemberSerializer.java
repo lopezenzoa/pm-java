@@ -1,4 +1,4 @@
-package model.serializers;
+package controller.serializers;
 
 import model.TeamMember;
 import model.enums.Role;
@@ -17,13 +17,13 @@ public class TeamMemberSerializer extends UserSerializer {
      * @param teamMemberJSON is the JSONObject used as starting point.
      * */
     public TeamMember deserialize(JSONObject teamMemberJSON) {
-        HashSet<UUID> ongoingProjects = new HashSet<>();
+        HashSet<Integer> ongoingProjects = new HashSet<>();
 
         try {
             TeamMember teamMember = (TeamMember) super.deserialize(teamMemberJSON);
 
             for (Object projectIDJSON : teamMemberJSON.getJSONArray("ongoingProjects"))
-                ongoingProjects.add(UUID.fromString(projectIDJSON.toString()));
+                ongoingProjects.add((Integer) projectIDJSON);
 
             teamMember.setOngoingProjects(ongoingProjects);
             teamMember.setRole(Role.valueOf(teamMemberJSON.getString("role")));
@@ -47,8 +47,8 @@ public class TeamMemberSerializer extends UserSerializer {
             memberJSON = super.serialize(teamMember);
             JSONArray ongoingProjectsJSON = new JSONArray();
 
-            for (UUID projectID : teamMember.getOngoingProjects())
-                ongoingProjectsJSON.put(projectID.toString());
+            for (Integer projectID : teamMember.getOngoingProjects())
+                ongoingProjectsJSON.put(projectID);
 
             memberJSON.put("ongoingProjects", teamMember.getOngoingProjects());
             memberJSON.put("role", teamMember.getRole());

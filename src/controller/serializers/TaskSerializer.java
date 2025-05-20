@@ -1,4 +1,4 @@
-package model.serializers;
+package controller.serializers;
 
 import model.Task;
 import model.enums.Status;
@@ -24,8 +24,8 @@ public class TaskSerializer implements Serializable<Task> {
         Task task = new Task();
 
         try {
-            task.setID(UUID.fromString(taskJSON.getString("ID")));
-            task.setProjectID(UUID.fromString(taskJSON.getString("projectID")));
+            task.setID(taskJSON.getInt("ID"));
+            task.setProjectID(taskJSON.getInt("projectID"));
             task.setTitle(taskJSON.getString("title"));
             task.setDescription(taskJSON.getString("description"));
             task.setResponsible(serializer.deserialize(taskJSON.getJSONObject("responsible")));

@@ -1,4 +1,4 @@
-package model.serializers;
+package controller.serializers;
 
 import model.Leader;
 import model.TeamMember;
@@ -22,13 +22,13 @@ public class LeaderSerializer extends UserSerializer {
      * */
     public Leader deserialize(JSONObject leaderJSON) {
         HashSet<TeamMember> dependants = new HashSet<>();
-        HashSet<UUID> ongoingProjects = new HashSet<>();
+        HashSet<Integer> ongoingProjects = new HashSet<>();
 
         try {
             Leader leader = (Leader) super.deserialize(leaderJSON);
 
             for (Object projectIDJSON : leaderJSON.getJSONArray("ongoingProjects"))
-                ongoingProjects.add(UUID.fromString(projectIDJSON.toString()));
+                ongoingProjects.add((Integer) projectIDJSON);
 
             leader.setOngoingProjects(ongoingProjects);
 
@@ -58,8 +58,8 @@ public class LeaderSerializer extends UserSerializer {
             JSONArray ongoingProjectsJSON = new JSONArray();
             JSONArray dependantsJSON = new JSONArray();
 
-            for (UUID projectID : leader.getOngoingProjects()){
-                ongoingProjectsJSON.put(projectID.toString());
+            for (Integer projectID : leader.getOngoingProjects()){
+                ongoingProjectsJSON.put(projectID);
             }
 
             leaderJSON.put("ongoingProjects", ongoingProjectsJSON);

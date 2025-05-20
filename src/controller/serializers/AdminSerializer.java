@@ -1,4 +1,4 @@
-package model.serializers;
+package controller.serializers;
 
 import model.Admin;
 import model.Leader;

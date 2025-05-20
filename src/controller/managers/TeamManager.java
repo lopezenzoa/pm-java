@@ -1,6 +1,5 @@
-package model.managers;
+package controller.managers;
 
-import model.Task;
 import model.TeamMember;
 
 import java.util.HashMap;

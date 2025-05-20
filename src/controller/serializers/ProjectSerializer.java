@@ -1,4 +1,4 @@
-package model.serializers;
+package controller.serializers;
 
 import model.*;
 import model.enums.Status;
@@ -32,28 +32,32 @@ public class ProjectSerializer implements Serializable<Project> {
      * */
     public Project deserialize(JSONObject projectJSON) {
         Project project = new Project();
-        HashMap<UUID, TeamMember> team = new HashMap<>();
+        HashMap<Integer, TeamMember> team = new HashMap<>();
         LinkedList<Task> tasks = new LinkedList<>();
 
         try {
-            project.setID(UUID.fromString(projectJSON.getString("ID")));
+            project.setID(projectJSON.getInt("ID"));
             project.setAdmin(adminSerializer.deserialize(projectJSON.getJSONObject("admin")));
             project.setLeader(leaderSerializer.deserialize(projectJSON.getJSONObject("leader")));
 
             JSONArray teamJSON = projectJSON.getJSONArray("team");
             for (int i = 0; i < teamJSON.length(); i++) {
                 JSONObject memberJSON = teamJSON.getJSONObject(i);
-                UUID memberID = UUID.fromString(memberJSON.getString("ID"));
+                Integer memberID = memberJSON.getInt("ID");
                 TeamMember member = teamMemberSerializer.deserialize(memberJSON.getJSONObject("member"));
 
                 team.put(memberID, member);
             }
+
+            project.setTeam(team);
 
             JSONArray tasksJSON = projectJSON.getJSONArray("tasks");
             for (int i = 0; i < tasksJSON.length(); i++) {
                 JSONObject taskJSON = tasksJSON.getJSONObject(i);
                 tasks.add(taskSerializer.deserialize(taskJSON));
             }
+
+            project.setTasks(tasks);
 
             project.setName(projectJSON.getString("name"));
             project.setCreationDate(projectJSON.getString("creationDate"));
@@ -87,8 +91,8 @@ public class ProjectSerializer implements Serializable<Project> {
             projectJSON.put("leader", leaderSerializer.serialize(project.getLeader()));
 
             JSONObject memberJSON = new JSONObject();
-            for (Map.Entry<UUID, TeamMember> entry : project.getTeam().entrySet()) {
-                memberJSON.put("ID", entry.getKey().toString());
+            for (Map.Entry<Integer, TeamMember> entry : project.getTeam().entrySet()) {
+                memberJSON.put("ID", entry.getKey());
                 memberJSON.put("member", teamMemberSerializer.serialize(entry.getValue()));
 
                 teamJSON.put(memberJSON);

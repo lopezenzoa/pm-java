@@ -1,4 +1,4 @@
-package model.serializers;
+package controller.serializers;
 
 import model.User;
 import model.enums.Visibility;
@@ -17,7 +17,7 @@ public abstract class UserSerializer implements Serializable<User> {
         User user = new User();
 
         try {
-            user.setID(UUID.fromString(userJSON.getString("ID")));
+            user.setID(userJSON.getInt("ID"));
             user.setName(userJSON.getString("name"));
             user.setEmail(userJSON.getString("email"));
             user.setPassword(userJSON.getString("password"));

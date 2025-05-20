@@ -1,4 +1,4 @@
-package model.managers;
+package controller.managers;
 
 import model.Task;
 
